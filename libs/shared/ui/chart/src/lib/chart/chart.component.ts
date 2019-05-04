@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -19,11 +13,11 @@ export class ChartComponent implements OnInit {
   chart: {
     title: string;
     type: string;
-    data: any;
+    data: [];
     columnNames: string[];
-    options: any;
+    options: {};
   };
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor() {}
 
   ngOnInit() {
     this.chart = {
