@@ -25,10 +25,25 @@ export class StocksComponent implements OnInit {
     { viewValue: 'One month', value: '1m' }
   ];
 
+  maxDate = new Date();
+
+  toFilter = (d: Date): boolean => {
+    return d > this.stockPickerForm.get('fromDate').value;
+  };
+
+  fromFilter = (d: Date): boolean => {
+    if (this.stockPickerForm.get('toDate').value !== ' ') {
+      return d < this.stockPickerForm.get('toDate').value;
+    }
+    return d <= this.maxDate;
+  };
+
   constructor(private fb: FormBuilder, private priceQuery: PriceQueryFacade) {
     this.stockPickerForm = this.fb.group({
       symbol: [' ', Validators.required],
-      period: [' ', Validators.required]
+      period: [' ', Validators.required],
+      fromDate: [' ', Validators.required],
+      toDate: [' ', Validators.required]
     });
   }
 
