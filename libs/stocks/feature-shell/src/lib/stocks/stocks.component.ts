@@ -26,14 +26,14 @@ export class StocksComponent implements OnInit {
   ];
 
   constructor(private fb: FormBuilder, private priceQuery: PriceQueryFacade) {
-    this.stockPickerForm = fb.group({
-      symbol: [null, Validators.required],
-      period: [null, Validators.required]
+    this.stockPickerForm = this.fb.group({
+      symbol: [' ', Validators.required],
+      period: [' ', Validators.required]
     });
   }
 
   ngOnInit() {
-    this.stockPickerForm.valueChanges.subscribe(this.fetchQuote);
+    this.stockPickerForm.valueChanges.subscribe(() => this.fetchQuote);
   }
 
   fetchQuote() {
