@@ -6,7 +6,7 @@ import {
 } from '@coding-challenge/stocks/data-access-app-config';
 import { Effect } from '@ngrx/effects';
 import { DataPersistence } from '@nrwl/nx';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import {
   FetchPriceQuery,
   PriceQueryActionTypes,
@@ -22,6 +22,9 @@ export class PriceQueryEffects {
     PriceQueryActionTypes.FetchPriceQuery,
     {
       run: (action: FetchPriceQuery, state: PriceQueryPartialState) => {
+        if (localStorage.getItem(action.symbol)) {
+          return JSON.parse(localStorage.getItem(action.symbol));
+        }
         return this.httpClient
           .get(
             `${this.env.apiURL}/beta/stock/${action.symbol}/chart/${
@@ -29,7 +32,10 @@ export class PriceQueryEffects {
             }?token=${this.env.apiKey}`
           )
           .pipe(
-            map(resp => new PriceQueryFetched(resp as PriceQueryResponse[]))
+            map(resp => new PriceQueryFetched(resp as PriceQueryResponse[])),
+            tap(result =>
+              localStorage.setItem(action.symbol, JSON.stringify(result))
+            )
           );
       },
 
