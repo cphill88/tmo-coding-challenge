@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PriceQueryFacade } from '@coding-challenge/stocks/data-access-price-query';
+import { elementEnd } from '@angular/core/src/render3';
 
 @Component({
   selector: 'coding-challenge-stocks',
@@ -41,7 +42,7 @@ export class StocksComponent implements OnInit {
   constructor(private fb: FormBuilder, private priceQuery: PriceQueryFacade) {
     this.stockPickerForm = this.fb.group({
       symbol: [' ', Validators.required],
-      period: [' ', Validators.required],
+      period: ['max', Validators.required],
       fromDate: [' ', Validators.required],
       toDate: [' ', Validators.required]
     });
@@ -55,6 +56,18 @@ export class StocksComponent implements OnInit {
     if (this.stockPickerForm.valid) {
       const { symbol, period } = this.stockPickerForm.value;
       this.priceQuery.fetchQuote(symbol, period);
+      this.quotes$.subscribe(response => {
+        const dateRangePrices = response.filter(element => {
+          const from = this.stockPickerForm.get('fromDate').value.getTime();
+          const to = this.stockPickerForm.get('toDate').value.getTime();
+          const elementDate = new Date(element[0]).getTime();
+
+          if (elementDate >= from && elementDate <= to) {
+            return true;
+          }
+        });
+        console.log(dateRangePrices);
+      });
     }
   }
 }
